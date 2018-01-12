@@ -180,8 +180,8 @@ export default class Blockchain {
   }
 
   // Submits new transaction
-  public submitTransaction(senderAddress: Address, recipientAddress: Address, value: number) {
-    this.transactionPool.push(new Transaction(senderAddress, recipientAddress, value));
+  public submitTransaction(transaction: Transaction) {
+    this.transactionPool.push(transaction);
   }
 
   // Creates new block on the blockchain.
