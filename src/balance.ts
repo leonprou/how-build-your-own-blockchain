@@ -2,10 +2,11 @@ import { Dictionary } from "typescript-collections";
 import * as fs from "fs";
 import * as path from "path";
 import { serialize, deserialize } from "serializer.ts/Serializer";
-import Address from './address'
-import Transaction from './transaction'
-import Block from './block'
-import Blockchain from './blockchain'
+import Address from './address';
+import Transaction from './transaction';
+import Block from './block';
+import Blockchain from './blockchain';
+import Account from './account';
 
 export default class Balance {
   public accounts: Dictionary<Address, number>;
