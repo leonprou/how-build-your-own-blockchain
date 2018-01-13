@@ -7,13 +7,12 @@ import Block from "./block";
 import Transaction from "./transaction";
 import Node from "./node";
 import Address from "./address";
+import Balance from "./balance";
 import BigNumber from "bignumber.js";
 
 export default class Blockchain {
   // Let's define that our "genesis" block as an empty block, starting from the January 1, 1970 (midnight "UTC").
-  public static readonly GENESIS_BLOCK = new Block(0, [
-	  //new Transaction(null, "Alice", 1000)
-  ], 0, 0, null);
+  public static readonly GENESIS_BLOCK = new Block(0, [], 0, 0, null);
 
   public static readonly DIFFICULTY = 4;
   public static readonly TARGET = 2 ** (256 - Blockchain.DIFFICULTY);
@@ -161,10 +160,10 @@ export default class Blockchain {
   }
 
   // Mines for block.
-  private mineBlock(transactions: Array<Transaction>): Block {
+  private mineBlock(transactions: Array<Transaction>, balance: Balance): Block {
     // Create a new block which will "point" to the last block.
     const lastBlock = this.getLastBlock();
-    const newBlock = new Block(lastBlock.blockNumber + 1, transactions, Blockchain.now(), 0, lastBlock.sha256());
+    const newBlock = new Block(lastBlock.blockNumber + 1, transactions, balance, Blockchain.now(), 0, lastBlock.sha256());
 
     while (true) {
       const pow = newBlock.sha256();
@@ -187,13 +186,13 @@ export default class Blockchain {
   }
 
   // Creates new block on the blockchain.
-  public createBlock(): Block {
+  public createBlock(balance: Balance): Block {
     // Add a "coinbase" transaction granting us the mining reward!
     const transactions = [new Transaction(Blockchain.MINING_SENDER, this.nodeId, Blockchain.MINING_REWARD),
       ...this.transactionPool];
 
     // Mine the transactions in a new block.
-    const newBlock = this.mineBlock(transactions);
+    const newBlock = this.mineBlock(transactions, balance);
 
     // Append the new block to the blockchain.
     this.blocks.push(newBlock);

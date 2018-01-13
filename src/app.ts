@@ -55,7 +55,7 @@ app.get("/blocks/:id", (req: express.Request, res: express.Response) => {
 
 app.post("/blocks/mine", (req: express.Request, res: express.Response) => {
   // Mine the new block.
-  const newBlock = blockchain.createBlock();
+  const newBlock = blockchain.createBlock(balance);
   balance.save();
   res.json(`Mined new block #${newBlock.blockNumber}`);
 });

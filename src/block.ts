@@ -1,5 +1,6 @@
 import { sha256 } from "js-sha256";
 import Transaction from "./transaction";
+import Balance from "./balance";
 import { serialize, deserialize } from "serializer.ts/Serializer";
 
 export default class Block {
@@ -8,11 +9,13 @@ export default class Block {
   public timestamp: number;
   public nonce: number;
   public prevBlock: string;
+  public balance: Balance;
 
-  constructor(blockNumber: number, transactions: Array<Transaction>, timestamp: number, nonce: number,
+  constructor(blockNumber: number, transactions: Array<Transaction>, balance: Balance, timestamp: number, nonce: number,
     prevBlock: string) {
     this.blockNumber = blockNumber;
     this.transactions = transactions;
+    this.balance = balance;
     this.timestamp = timestamp;
     this.nonce = nonce;
     this.prevBlock = prevBlock;
