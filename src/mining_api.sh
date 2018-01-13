@@ -9,9 +9,9 @@ trap "kill 0" EXIT
 NODE_PORT=3000
 NODE_URL="http://localhost:${NODE_PORT}"
 
-node ../dist/app.js &
+#node ../dist/app.js &
 
-sleep 2
+#sleep 2
 
 # Submit 2 transactions to the node.
 echo -e && read -n 1 -s -r -p "Submitting transactions. Press any key to continue..." && echo -e
@@ -19,13 +19,13 @@ echo -e && read -n 1 -s -r -p "Submitting transactions. Press any key to continu
 curl -X POST -H "Content-Type: application/json" -d '{
  "senderAddress": "Alice",
  "recipientAddress": "Bob",
- "value": "1000"
+ "value": "500"
 }' "${NODE_URL}/transactions" -w "\n"
 
 curl -X POST -H "Content-Type: application/json" -d '{
- "senderAddress": "Alice",
+ "senderAddress": "Bob",
  "recipientAddress": "Eve",
- "value": "12345"
+ "value": "200"
 }' "${NODE_URL}/transactions" -w "\n"
 
 # Mine one block.

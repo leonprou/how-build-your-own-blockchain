@@ -9,7 +9,7 @@ import * as parseArgs from "minimist";
 import Blockchain from "./blockchain";
 import Block from "./block";
 import Node from "./node";
-import Balance from './balance';
+import Balance, {fromBlockchain} from './balance';
 import Transaction from './transaction';
 
 // Web server:
@@ -18,7 +18,8 @@ const PORT = ARGS.port || 3000;
 const app = express();
 const nodeId = ARGS.id || uuidv4();
 const blockchain = new Blockchain(nodeId);
-const balance = new Balance();
+const balance = fromBlockchain(blockchain);
+
 
 // Set up bodyParser:
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -55,7 +56,7 @@ app.get("/blocks/:id", (req: express.Request, res: express.Response) => {
 app.post("/blocks/mine", (req: express.Request, res: express.Response) => {
   // Mine the new block.
   const newBlock = blockchain.createBlock();
-
+  balance.save();
   res.json(`Mined new block #${newBlock.blockNumber}`);
 });
 
@@ -75,7 +76,7 @@ app.post("/transactions", (req: express.Request, res: express.Response) => {
     return;
   }
   const transaction = new Transaction(senderAddress, recipientAddress, value);
-  balance.verify(transaction);
+  balance.apply(transaction);
   blockchain.submitTransaction(transaction);
 
   res.json(`Transaction from ${senderAddress} to ${recipientAddress} was added successfully`);
