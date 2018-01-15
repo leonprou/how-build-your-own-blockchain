@@ -7,7 +7,7 @@ import Block from "./block";
 import Transaction from "./transaction";
 import Node from "./node";
 import Address from "./address";
-import Balance from "./balance";
+import State from "./state";
 import BigNumber from "bignumber.js";
 
 export default class Blockchain {
@@ -160,10 +160,10 @@ export default class Blockchain {
   }
 
   // Mines for block.
-  private mineBlock(transactions: Array<Transaction>, balance: Balance): Block {
+  private mineBlock(transactions: Array<Transaction>, state: State): Block {
     // Create a new block which will "point" to the last block.
     const lastBlock = this.getLastBlock();
-    const newBlock = new Block(lastBlock.blockNumber + 1, transactions, balance, Blockchain.now(), 0, lastBlock.sha256());
+    const newBlock = new Block(lastBlock.blockNumber + 1, transactions, state, Blockchain.now(), 0, lastBlock.sha256());
 
     while (true) {
       const pow = newBlock.sha256();
@@ -186,13 +186,13 @@ export default class Blockchain {
   }
 
   // Creates new block on the blockchain.
-  public createBlock(balance: Balance): Block {
+  public createBlock(state: State): Block {
     // Add a "coinbase" transaction granting us the mining reward!
     const transactions = [new Transaction(Blockchain.MINING_SENDER, this.nodeId, Blockchain.MINING_REWARD),
       ...this.transactionPool];
 
     // Mine the transactions in a new block.
-    const newBlock = this.mineBlock(transactions, balance);
+    const newBlock = this.mineBlock(transactions, state);
 
     // Append the new block to the blockchain.
     this.blocks.push(newBlock);

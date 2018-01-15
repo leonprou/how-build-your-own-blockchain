@@ -9,7 +9,7 @@ import * as parseArgs from "minimist";
 import Blockchain from "./blockchain";
 import Block from "./block";
 import Node from "./node";
-import Balance, {fromBlockchain} from './balance';
+import State, {fromBlockchain} from './state';
 import Transaction from './transaction';
 
 // Web server:
@@ -18,7 +18,7 @@ const PORT = ARGS.port || 3000;
 const app = express();
 const nodeId = ARGS.id || uuidv4();
 const blockchain = new Blockchain(nodeId);
-const balance = fromBlockchain(blockchain);
+const state = fromBlockchain(blockchain);
 
 
 // Set up bodyParser:
@@ -55,8 +55,8 @@ app.get("/blocks/:id", (req: express.Request, res: express.Response) => {
 
 app.post("/blocks/mine", (req: express.Request, res: express.Response) => {
   // Mine the new block.
-  const newBlock = blockchain.createBlock(balance);
-  balance.save();
+  const newBlock = blockchain.createBlock(state);
+  state.save();
   res.json(`Mined new block #${newBlock.blockNumber}`);
 });
 
@@ -76,10 +76,14 @@ app.post("/transactions", (req: express.Request, res: express.Response) => {
     return;
   }
   const transaction = new Transaction(senderAddress, recipientAddress, value);
-  balance.apply(transaction);
+  state.apply(transaction);
   blockchain.submitTransaction(transaction);
 
   res.json(`Transaction from ${senderAddress} to ${recipientAddress} was added successfully`);
+});
+
+app.get("/state", (req: express.Request, res: express.Response) => {
+  res.json(serialize(blockchain.blocks[blockchain.blocks.length - 1].state));
 });
 
 app.get("/nodes", (req: express.Request, res: express.Response) => {
@@ -94,7 +98,7 @@ app.post("/nodes", (req: express.Request, res: express.Response) => {
     res.json("Invalid parameters!");
     res.status(500);
     return;
-  }
+ 
 
   const node = new Node(id, url);
 

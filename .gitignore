@@ -59,4 +59,4 @@ typings/
 
 dist/
 *.blockchain
-*.balance
+*.state

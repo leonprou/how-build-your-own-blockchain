@@ -1,12 +1,12 @@
 import Blockchain from './blockchain'
-import Balance from './balance'
+import State from './state'
 export default class Client {
   public blockchain: Blockchain;
-  public balance: Balance;
+  public state: State;
   
   constructor() {
     this.blockchain = null;
-    this.balance = new Balance();
+    this.state = new State();
   }
 
 }
